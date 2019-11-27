@@ -8,7 +8,7 @@ import { MatSidenav } from "@angular/material";
 })
 export class LayoutComponent implements OnInit {
 
-  @ViewChild('sidenav') sidenav: MatSidenav;
+  @ViewChild('sidenav', {static: true}) sidenav: MatSidenav;
 
   constructor() { }
 

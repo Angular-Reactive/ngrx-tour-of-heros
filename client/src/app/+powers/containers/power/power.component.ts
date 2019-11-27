@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from "@angular/router";
 
-import { Observable } from "rxjs/Observable";
+import { Observable } from "rxjs";
 import { filter, map, switchMap } from "rxjs/operators";
 
 import { Power } from "../../../core/models/power.model";

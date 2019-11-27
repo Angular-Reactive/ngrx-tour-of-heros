@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from "@angular/material";
 
-import { Observable } from "rxjs/Observable";
+import { Observable } from "rxjs";
 
 import { PowersService } from "../../../core/services/powers.service";
 import { Power } from "../../../core/models/power.model";
