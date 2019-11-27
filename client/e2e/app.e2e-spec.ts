@@ -1,14 +1,14 @@
-import { AppPage } from "./app.po";
+import { AppPage } from './app.po';
 
-describe("Tour of Heroes", () => {
+describe('client App', () => {
   let page: AppPage;
 
   beforeEach(() => {
     page = new AppPage();
   });
 
-  it("should load application", async () => {
-    await page.navigateTo();
-    expect(page.getRouterOutlet()).toBeTruthy();
+  it('should display welcome message', () => {
+    page.navigateTo();
+    expect(page.getParagraphText()).toEqual('Welcome to app!');
   });
 });
