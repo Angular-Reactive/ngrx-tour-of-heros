@@ -1,29 +1,24 @@
-import { Component, HostListener, OnInit } from "@angular/core";
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { MatAutocompleteSelectedEvent, MatDialogRef } from "@angular/material";
-import "rxjs/add/observable/of";
 
 import { Observable } from "rxjs/Observable";
-import {
-  debounceTime,
-  distinctUntilChanged,
-  filter,
-  map,
-  switchMap
-} from "rxjs/operators";
-import { Character } from "../../../core/models/character.model";
-import { Hero } from "../../../core/models/hero.model";
-import { Power } from "../../../core/models/power.model";
-import { CharactersService } from "../../../core/services/characters.service";
+import { debounceTime, filter, map, switchMap } from "rxjs/operators";
+import 'rxjs/add/observable/of';
 
 import { HeroesService } from "../../../core/services/heroes.service";
+import { Power } from "../../../core/models/power.model";
 import { PowersService } from "../../../core/services/powers.service";
+import { Hero } from "../../../core/models/hero.model";
+import { Character } from "../../../core/models/character.model";
+import { CharactersService } from "../../../core/services/characters.service";
 
 @Component({
-  templateUrl: "./add-hero-dialog.component.html",
-  styleUrls: ["./add-hero-dialog.component.scss"]
+  templateUrl: './add-hero-dialog.component.html',
+  styleUrls: ['./add-hero-dialog.component.scss']
 })
 export class AddHeroDialogComponent implements OnInit {
+
   filteredCharacters: Observable<Array<Character>>;
 
   form: FormGroup;
@@ -35,26 +30,27 @@ export class AddHeroDialogComponent implements OnInit {
   private powers: Array<Power>;
 
   // TODO: use store instead of services
-  constructor(
-    private charactersService: CharactersService,
-    private formBuilder: FormBuilder,
-    private heroesService: HeroesService,
-    private matDialogRef: MatDialogRef<AddHeroDialogComponent>,
-    private powersService: PowersService
-  ) {}
+  constructor(private charactersService: CharactersService,
+              private formBuilder: FormBuilder,
+              private heroesService: HeroesService,
+              private matDialogRef: MatDialogRef<AddHeroDialogComponent>,
+              private powersService: PowersService) {
+  }
 
   ngOnInit() {
     this.form = this.formBuilder.group({
-      name: ["", Validators.required]
+      name: ['', Validators.required]
     });
 
-    this.powersService.getPowers().subscribe(powers => (this.powers = powers));
+    // TODO: unsubscribe
+    this.powersService.getPowers()
+      .subscribe(powers => this.powers = powers);
 
-    this.filteredCharacters = this.form
-      .get("name")
-      .valueChanges.pipe(
+    // TODO: unsubscribe
+    this.filteredCharacters = this.form.get('name')
+      .valueChanges
+      .pipe(
         debounceTime(500),
-        distinctUntilChanged(),
         switchMap(value => this.filter(value))
       );
   }
@@ -72,19 +68,18 @@ export class AddHeroDialogComponent implements OnInit {
     if (character) {
       return character.name;
     }
-    return "";
+    return '';
   }
 
   filter(name: string): Observable<Array<Character>> {
     if (name.length === 0) {
       return Observable.of([]);
     }
-    return this.charactersService
-      .getCharacters(name)
+    return this.charactersService.getCharacters(name)
       .pipe(
         filter(marvelResponse => marvelResponse.code === 200),
         map(marvelResponse => marvelResponse.data.results)
-      );
+      )
   }
 
   @HostListener("keydown.esc")
@@ -102,7 +97,8 @@ export class AddHeroDialogComponent implements OnInit {
     hero.powers = this.selectedPowers.map(power => power.id);
 
     // TODO: dispatch action to store
-    this.heroesService.createHero(hero).subscribe(() => this.close());
+    this.heroesService.createHero(hero)
+      .subscribe(() => this.close());
   }
 
   togglePower(power: Power) {
@@ -112,4 +108,5 @@ export class AddHeroDialogComponent implements OnInit {
       this.selectedPowers.push(power);
     }
   }
+
 }

@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { MatDialog } from "@angular/material";
-import { Actions, Effect } from "@ngrx/effects";
+import { Actions, Effect, ofType } from "@ngrx/effects";
 import { Action } from "@ngrx/store";
 import "rxjs/add/observable/of";
 import { Observable } from "rxjs/Observable";
@@ -38,8 +38,9 @@ import {
 export class PowersEffects {
 
   @Effect()
-  addPower: Observable<Action> = this.actions.ofType<AddPower>(ADD_POWER)
+  addPower: Observable<Action> =  this.actions
     .pipe(
+      ofType<AddPower>(ADD_POWER),
       map(action => action.payload),
       switchMap(power => this.powersService.createPower(power).pipe(retry(3))),
       map(power => new AddPowerSuccess(power)),
@@ -47,8 +48,9 @@ export class PowersEffects {
     );
 
   @Effect()
-  addPowerSuccess: Observable<Action> = this.actions.ofType<AddPowerSuccess>(ADD_POWER_SUCCESS)
+  addPowerSuccess: Observable<Action> = this.actions
     .pipe(
+      ofType<AddPowerSuccess>(ADD_POWER_SUCCESS),
       mergeMap(() => [
         new SnackbarOpen({
           message: 'Power Created',
@@ -61,22 +63,25 @@ export class PowersEffects {
   @Effect({
     dispatch: false
   })
-  addPowerDialogClose: Observable<any> = this.actions.ofType<AddPowerDialogClose>(ADD_POWER_DIALOG_CLOSE)
+  addPowerDialogClose: Observable<any> = this.actions
     .pipe(
+      ofType<AddPowerDialogClose>(ADD_POWER_DIALOG_CLOSE),
       tap(() => this.matDialog.closeAll())
     );
 
   @Effect({
     dispatch: false
   })
-  addPowerDialogOpen: Observable<any> = this.actions.ofType<AddPowerDialogOpen>(ADD_POWER_DIALOG_OPEN)
+  addPowerDialogOpen: Observable<any> = this.actions
     .pipe(
+      ofType<AddPowerDialogOpen>(ADD_POWER_DIALOG_OPEN),
       tap(() => this.matDialog.open(AddPowerDialogComponent))
     );
 
   @Effect()
-  deletePower: Observable<Action> = this.actions.ofType<DeletePower>(DELETE_POWER)
+  deletePower: Observable<Action> = this.actions
     .pipe(
+      ofType<DeletePower>(DELETE_POWER),
       map(action => action.payload),
       switchMap(power => this.powersService.deletePower(power).pipe(retry(3))),
       map(power => new DeletePowerSuccess(power)),
@@ -84,16 +89,18 @@ export class PowersEffects {
     );
 
   @Effect()
-  loadPowers: Observable<Action> = this.actions.ofType<LoadPowers>(LOAD_POWERS)
+  loadPowers: Observable<Action> = this.actions
     .pipe(
+      ofType<LoadPowers>(LOAD_POWERS),
       switchMap(() => this.powersService.getPowers().pipe(retry(3))),
       map(powers => new LoadPowersSuccess(powers)),
       catchError((e: HttpErrorResponse) => Observable.of(new HttpError(e)))
     );
 
   @Effect()
-  loadPower: Observable<Action> = this.actions.ofType<LoadPower>(LOAD_POWER)
+  loadPower: Observable<Action> = this.actions
     .pipe(
+      ofType<LoadPower>(LOAD_POWER),
       map(action => action.payload),
       switchMap(payload => this.powersService.getPower(payload.id).pipe(retry(3))),
       map(power => new LoadPowerSuccess(power)),
@@ -101,8 +108,9 @@ export class PowersEffects {
     );
 
   @Effect()
-  updatePower: Observable<Action> = this.actions.ofType<UpdatePower>(UPDATE_POWER)
+  updatePower: Observable<Action> = this.actions
     .pipe(
+      ofType<UpdatePower>(UPDATE_POWER),
       map(action => action.payload),
       switchMap(power => this.powersService.updatePower(power).pipe(retry(3))),
       map(power => new UpdatePowerSuccess(power)),
@@ -110,8 +118,9 @@ export class PowersEffects {
     );
 
   @Effect()
-  updatePowerSuccess: Observable<Action> = this.actions.ofType<UpdatePowerSuccess>(UPDATE_POWER_SUCCESS)
+  updatePowerSuccess: Observable<Action> = this.actions
     .pipe(
+      ofType<UpdatePowerSuccess>(UPDATE_POWER_SUCCESS),
       map(() => new SnackbarOpen({
         message: 'Power Updated',
         action: 'Success'

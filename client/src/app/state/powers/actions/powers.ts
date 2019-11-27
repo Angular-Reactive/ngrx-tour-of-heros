@@ -66,7 +66,9 @@ export class LoadPowersSuccess implements Action {
 export class LoadPower implements Action {
   readonly type = LOAD_POWER;
 
-  constructor(public payload: { id: number }) {
+  // constructor(public payload: { id: number }) {
+  // }
+  constructor(public payload: { id: string }) {
   }
 }
 

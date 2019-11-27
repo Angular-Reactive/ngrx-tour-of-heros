@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { Store } from "@ngrx/store";
+import { MatDialog } from "@angular/material";
 
-import { Observable } from "rxjs/Observable";
+import { Observable } from "rxjs";
+
+import { PowersService } from "../../../core/services/powers.service";
 import { Power } from "../../../core/models/power.model";
-import { AddPowerDialogOpen, DeletePower, LoadPowers } from "../../../state/powers/actions/powers";
-import { getAllPowers, isPowerLoading, PowersState } from "../../../state/powers/reducers";
+import { AddPowerDialogComponent } from "../../components/add-power-dialog/add-power-dialog.component";
 
 @Component({
   selector: 'app-index',
@@ -13,25 +14,27 @@ import { getAllPowers, isPowerLoading, PowersState } from "../../../state/powers
 })
 export class IndexComponent implements OnInit {
 
-  loading: Observable<boolean>;
-
   powers: Observable<Array<Power>>;
 
-  constructor(private store: Store<PowersState>) {
-  }
+  // TODO: use store in place of service
+  constructor(private matDialog: MatDialog, private powersService: PowersService) { }
 
   ngOnInit() {
-    this.loading = this.store.select(isPowerLoading);
-    this.powers = this.store.select(getAllPowers);
-    this.store.dispatch(new LoadPowers());
+    // TODO: dispatch action to load powers
+    this.powers = this.powersService.getPowers();
   }
 
+  // TODO: use store for dialog state
+  // TODO: adding power doesn't emit new value in powers observable
   add() {
-    this.store.dispatch(new AddPowerDialogOpen());
+    this.matDialog.open(AddPowerDialogComponent);
   }
 
   delete(power: Power) {
-    this.store.dispatch(new DeletePower(power));
+    // TODO: don't subscribe
+    // TODO: don't reset Observable, just emit new value
+    this.powersService.deletePower(power)
+      .subscribe(() => this.powers = this.powersService.getPowers());
   }
 
 }

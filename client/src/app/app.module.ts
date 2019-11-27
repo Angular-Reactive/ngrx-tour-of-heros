@@ -1,33 +1,16 @@
-import { BrowserModule } from "@angular/platform-browser";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { NgModule } from "@angular/core";
-import {
-  MatButtonModule,
-  MatCardModule,
-  MatIconModule
-} from "@angular/material";
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
 
-import { AppComponent } from "./app.component";
-import { AppRoutingModule } from "./app-routing.module";
-import { SharedModule } from "./shared/shared.module";
-import { CoreModule } from "./core/core.module";
-import { StateModule } from "./state/state.module";
-import { IndexComponent } from "./containers/index/index.component";
+import { AppComponent } from './app.component';
 
 @NgModule({
-  declarations: [AppComponent, IndexComponent],
+  declarations: [
+    AppComponent
+  ],
   imports: [
-    AppRoutingModule,
-    BrowserModule,
-    BrowserAnimationsModule,
-    CoreModule.forRoot(),
-    MatButtonModule,
-    MatCardModule,
-    MatIconModule,
-    SharedModule,
-    StateModule.forRoot()
+    BrowserModule
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }

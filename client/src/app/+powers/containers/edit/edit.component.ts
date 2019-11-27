@@ -1,62 +1,46 @@
-import { Component, OnInit } from "@angular/core";
-import { MatSnackBar } from "@angular/material";
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from "@angular/router";
-import { Store } from "@ngrx/store";
+import { MatSnackBar } from "@angular/material";
 
-import { Observable } from "rxjs/Observable";
-import { first, map, switchMap, tap } from "rxjs/operators";
+import { Observable } from "rxjs";
 
 import { Power } from "../../../core/models/power.model";
-import {
-  LoadPower,
-  SelectPower,
-  UpdatePower
-} from "../../../state/powers/actions/powers";
-import {
-  getPowersTotal,
-  getSelectedPower,
-  PowersState,
-  getPowerEntities
-} from "../../../state/powers/reducers";
+import { PowersService } from "../../../core/services/powers.service";
+import { switchMap } from "rxjs/operators";
 
 @Component({
-  selector: "app-edit",
-  templateUrl: "./edit.component.html",
-  styleUrls: ["./edit.component.scss"]
+  selector: 'app-edit',
+  templateUrl: './edit.component.html',
+  styleUrls: ['./edit.component.scss']
 })
 export class EditComponent implements OnInit {
+
   power: Observable<Power>;
 
+  // TODO: use store instead of service
   constructor(
     private activatedRoute: ActivatedRoute,
-    private snackBar: MatSnackBar,
-    private store: Store<PowersState>
-  ) {}
-
-  ngOnInit() {
-    this.power = this.activatedRoute.paramMap.pipe(
-      tap(paramMap => {
-        const id = +paramMap.get("id");
-        this.store.dispatch(new SelectPower({ id: id }));
-        this.hasPowerInStore(id).subscribe(exists => {
-          if (!exists) {
-            this.store.dispatch(new LoadPower({ id: id }));
-          }
-        });
-      }),
-      switchMap(() => this.store.select(getSelectedPower))
-    );
+    private powersService: PowersService,
+    private snackBar: MatSnackBar) {
   }
 
-  hasPowerInStore(id: number): Observable<boolean> {
-    return this.store
-      .select(getPowerEntities)
+  ngOnInit() {
+    // TODO: dispatch action to load power
+    this.power = this.activatedRoute.paramMap
       .pipe(
-        first(powers => powers !== null, powers => powers[id] !== undefined)
+        switchMap(paramMap => this.powersService.getPower(paramMap.get('id')))
       );
   }
 
   powerChange(power: Power) {
-    this.store.dispatch(new UpdatePower(power));
+    // TODO: dispatch action to update power
+    // TODO: route back to index??
+    this.powersService.updatePower(power)
+      .subscribe(() => {
+        this.snackBar.open('Power Updated', 'Success', {
+          duration: 2000
+        });
+      });
   }
+
 }
